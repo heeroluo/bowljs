@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.0.0 (2015-03-23T14:29:35+0800)
+ * Javascript module loader for browser - v1.0.0 (2015-03-23T14:45:52+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -619,7 +619,7 @@ global.define = function() {
  * 更改加载器配置
  * @method config
  * @static
- * @for jraiser
+ * @for bowljs
  * @param {Object} newConfig 新配置
  *   @param {String} [newConfig.libPath] 类库路径
  *   @param {String} [newConfig.appPath] 应用路径
