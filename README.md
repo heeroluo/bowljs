@@ -8,9 +8,9 @@ Bowl.js的前身是[JRaiser项目](https://github.com/heeroluo/jraiser)中的加
 示例代码见[examples/helloworld](https://github.com/heeroluo/bowljs/tree/master/examples/helloworld)，目录结构为：
 
 > lib/  
-> |-- dom-debug.js  
+>  |-- dom-debug.js  
 > app/  
-> |-- helloworld-debug.js  
+>  |-- helloworld-debug.js  
 > index.html  
 
 ### 加载器配置
@@ -29,8 +29,6 @@ Bowl.js的前身是[JRaiser项目](https://github.com/heeroluo/jraiser)中的加
 综上所述，在 index.html 中 `require('/helloworld')` 时，由于模块路径以 `/` 开头，所以根路径为 appPath 。又因为 debug 参数为true，所以文件名后会自动添加`-debug`。最终解析结果为 `examples/helloworld/app/helloworld-debug.js` 。
 
 ### 模块机制
-
-#### 输出接口
 
 在 dom-debug.js 中，提供给外部的接口通过 exports 对象传递：
 
