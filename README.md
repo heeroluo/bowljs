@@ -25,6 +25,7 @@ Bowl.js的前身是[JRaiser项目](https://github.com/heeroluo/jraiser)中的加
 * libPath：**类库**路径。当require的路径*不*以 `/` 或 `.` 开头时，以此路径为根路径进行解析，如 `require('dom')` 。
 * appPath：**应用**路径。当require的路径以 `/` 开头时，以此路径为根路径进行解析，如 `require('/helloworld')` 。
 * debug：**调试**参数，当其值为true时，加载器会在require的文件名后添加 `-debug` 。
+* 更多可用参数见[配置文档](https://github.com/heeroluo/bowljs/wiki/Configuration)。
 
 综上所述，在 index.html 中 `require('/helloworld')` 时，由于模块路径以 `/` 开头，所以根路径为 appPath 。又因为 debug 参数为true，所以文件名后会自动添加`-debug`。最终解析结果为 `examples/helloworld/app/helloworld-debug.js` 。
 
