@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.0.1 (2015-05-13T15:35:44+0800)
+ * Javascript module loader for browser - v1.0.2 (2015-09-06T09:46:37+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -9,7 +9,7 @@
 if (global.bowljs) { return; }
 
 var bowljs = global.bowljs = {
-	version: '1.0.1',
+	version: '1.0.2',
 	logs: [ ]
 };
 
@@ -124,6 +124,11 @@ function idToURL(id, ref) {
 		filename = filename.substr(0, temp);
 	}
 	extname = extname || 'js';
+
+	// 解析 module@version 为 module/version/module
+	filename = filename.replace(/([^\\\/]+)@([^\\\/]+)/g, function(match, module, version) {
+		return module + '/' + version + '/' + module;
+	});
 
 	// 处理调试后缀
 	var re_debug = /-debug$/;
