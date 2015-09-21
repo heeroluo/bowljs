@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.0.2 (2015-09-06T09:46:37+0800)
+ * Javascript module loader for browser - v1.0.2 (2015-09-21T16:21:54+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -112,7 +112,12 @@ function resolvePath(path, ref) {
 
 // 把模块ID转换成URL
 function idToURL(id, ref) {
-	id = trimURL(id).split('/');
+	id = trimURL(id)
+		// 解析 module@version 为 module/version/module
+		.replace(/([^\\\/]+)@([^\\\/]+)/g, function(match, module, version) {
+			return module + '/' + version + '/' + module;
+		})
+		.split('/');
 
 	// 如果没有指定文件，则加载目录下的index
 	var filename = id.pop() || 'index', extname;
@@ -124,11 +129,6 @@ function idToURL(id, ref) {
 		filename = filename.substr(0, temp);
 	}
 	extname = extname || 'js';
-
-	// 解析 module@version 为 module/version/module
-	filename = filename.replace(/([^\\\/]+)@([^\\\/]+)/g, function(match, module, version) {
-		return module + '/' + version + '/' + module;
-	});
 
 	// 处理调试后缀
 	var re_debug = /-debug$/;
