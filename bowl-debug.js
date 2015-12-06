@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.0.2 (2015-09-21T16:21:54+0800)
+ * Javascript module loader for browser - v1.0.3 (2015-12-06T20:27:57+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -9,7 +9,7 @@
 if (global.bowljs) { return; }
 
 var bowljs = global.bowljs = {
-	version: '1.0.2',
+	version: '1.0.3',
 	logs: [ ]
 };
 
@@ -618,6 +618,7 @@ global.define = function() {
 
 	new Module(id, factory, isArray(deps) ? deps : [deps]);
 };
+global.define.amd = { };
 
 
 /**
