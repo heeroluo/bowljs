@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.0.3 (2016-02-07T17:56:23+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-08T11:54:31+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -9,7 +9,7 @@
 if (global.bowljs) { return; }
 
 var bowljs = global.bowljs = {
-	version: '1.0.3',
+	version: '1.1.0',
 	logs: [ ]
 };
 
@@ -686,18 +686,5 @@ bowljs.config({
 		return isDebug;
 	})()
 });
-
-
-// 加载data-main属性指定的js
-!function() {
-	var scripts = doc.getElementsByTagName('script'), dataMain;
-	for (var i = 0; i < scripts.length; i++) {
-		dataMain = scripts[i].getAttribute('data-main');
-		if ( dataMain && /bowl|jraiser/i.test(scripts[i].src) ) {
-			require(dataMain);
-			break;
-		}
-	}
-}();
 
 }(window);
