@@ -6,7 +6,7 @@ var gulp = require('gulp'),
 
 gulp.task('default', function() {
 	gulp.src('./bowl-debug.js')
-		.pipe( gulpReplace(/^(\s*var\s+isDebug\s*=\s*)(?:true|false)/m, '$1false') )
+		.pipe( gulpReplace(/^(\s*debug\s*:\s*)(?:true|false)/m, '$1false') )
 		.pipe( gulpUglify({
 			preserveComments: 'license'
 		}) )

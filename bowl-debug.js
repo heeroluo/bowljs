@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-08T11:54:31+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-08T16:42:21+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -75,17 +75,17 @@ function toAbsPath(path) {
 }
 
 // 解析相对路径（ref必须以/结尾）
-function resolvePath(path, ref) {
-	if ( /^\//.test(path) ) {
-		// 以“/”开头的路径，参考路径为应用路径
-		ref = config.appPath;
-		path = path.substr(1);
-	} else if ( !/^\./.test(path) ) {
-		// 非相对路径情况下，参考路径为类库路径
-		ref = config.libPath;
+function resolvePath(to, from) {
+	if ( /^\//.test(to) ) {
+		// 以“/”开头的路径，上下文路径为应用路径
+		from = config.appPath;
+		to = to.substr(1);
+	} else if ( !/^\./.test(to) ) {
+		// 非相对路径情况下，上下文路径为类库路径
+		from = config.libPath;
 	}
 
-	return toAbsPath(ref + path);
+	return toAbsPath(from + to);
 }
 
 // 把模块ID转换成URL
@@ -648,25 +648,36 @@ global.define.amd = { };
  * @param {Object} newConfig 新配置
  *   @param {String} [newConfig.libPath] 类库路径
  *   @param {String} [newConfig.appPath] 应用路径
- *   @param {String|Function} [newConfig.charset] 编码
- *   @param {Array} [newConfig.preload] 预加载脚本
  *   @param {Array} [newConfig.map] URL映射，多次配置会合并
  *   @param {Boolean} [newConfig.debug] 是否调试模式
+ *   @param {String|Function} [newConfig.charset] 编码
+ *   @param {Array} [newConfig.preload] 预加载脚本
  */
 bowljs.config = function(newConfig) {
-	// 修复路径配置
+	// 处理路径配置（转成绝对路径，路径末尾加上/）
 	var fixPath = function(path) {
 		if ( !isAbsPath(path) ) { path = toAbsPath(path); }
 		if ( path.charAt(path.length - 1) !== '/' ) { path += '/'; }
 		return path;
 	};
 
-	var map = config.map;
-	extend(config, newConfig);
+	if (newConfig.libPath) { config.libPath = fixPath(newConfig.libPath); }
+	if (newConfig.appPath) { config.appPath = fixPath(newConfig.appPath); }
 
-	if (map && config.map !== map) { config.map = map.concat(config.map); }
-	if (newConfig.libPath) { config.libPath = fixPath(config.libPath); }
-	if (newConfig.appPath) { config.appPath = fixPath(config.appPath); }
+	if (newConfig.map) { config.map = config.map.concat(newConfig.map); }
+
+	var search = global.location.search;
+	// 指定调试模式，优先级：URL参数>配置参数>默认值 
+	if ( /[?|&]debug(&|$)/.test(search) ) {
+		config.debug = true;
+	} else if ( /[?|&]nondebug(&|$)/.test(search) ) {
+		config.debug = false;
+	} else if (newConfig.debug != null) {
+		config.debug = !!newConfig.debug;
+	}
+
+	config.charset = newConfig.charset;
+	config.preload = newConfig.preload;
 };
 
 // 初始配置
@@ -675,16 +686,8 @@ bowljs.config({
 	libPath: './',
 	// 应用路径
 	appPath: './',
-	// debug参数启用调试模式；nondebug参数禁用调试模式
-	debug: (function() {
-		var isDebug = true, search = global.location.search;
-		if ( /[?|&]debug(&|$)/.test(search) ) {
-			isDebug = true;
-		} else if ( /[?|&]nondebug(&|$)/.test(search) ) {
-			isDebug = false;
-		}
-		return isDebug;
-	})()
+	// 调试模式，构建时替换成false
+	debug: true
 });
 
 }(window);
