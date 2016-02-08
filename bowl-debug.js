@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-08T18:51:42+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-08T18:55:11+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -673,6 +673,7 @@ bowljs.config = function(newConfig) {
 	config.preload = newConfig.preload;
 };
 
+
 // 初始配置
 bowljs.config({
 	// 类库路径
@@ -682,5 +683,7 @@ bowljs.config({
 	// 调试模式，构建时替换成false
 	debug: true
 });
+
+log('bowljs(ready)', 'version(' + bowljs.version + ')');
 
 }(window);
