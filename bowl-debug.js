@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-08T16:42:21+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-08T18:51:42+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -208,8 +208,7 @@ var scriptLoader = (function() {
 		load: function(src, onload) {
 			var currentStatus = status[src];
 
-			log('scriptLoader', 'load: ' + src);
-			log('scriptLoader', 'status: ' + currentStatus);
+			log('scriptLoader.load', 'src(' + src + '), status(' + currentStatus + ')');
 
 			if (currentStatus) {
 				// status为1时表示此文件加载中，无须二次加载
@@ -240,7 +239,7 @@ var scriptLoader = (function() {
 						// 记录加载完成
 						status[src] = 2;
 
-						log('scriptLoader', 'onload: ' + src);
+						log('scriptLoader.load(onload)', src);
 
 						script[onloadEvent] = script.onerror = null;
 						head.removeChild(script);
@@ -276,9 +275,7 @@ var dependentChain = (function() {
 	return {
 		// 添加依赖记录
 		add: function(moduleId, depId) {
-			log('dependentChain', 'add');
-			log('dependentChain', 'moduleId: ' + moduleId);
-			log('dependentChain', 'depId: ' + depId);
+			log('dependentChain.add', 'moduleId(' + moduleId + '), depId(' + depId + ')');
 
 			var which = whichDepOnMe[depId] = whichDepOnMe[depId] || [ ];
 			which.push(moduleId);
@@ -289,8 +286,7 @@ var dependentChain = (function() {
 
 		// 清除依赖于某个模块的记录（当被依赖模块就绪时，即可清除）
 		clear: function(depId) {
-			log('dependentChain', 'remove');
-			log('dependentChain', 'depId: ' + depId);
+			log('dependentChain.remove', 'depId(' + depId + ')');
 
 			delete whichDepOnMe[depId];
 		}
@@ -334,8 +330,6 @@ var taskManager = (function() {
 						counter++;
 						// 所有script已经就绪
 						if (counter >= total) {
-							log('taskManager', 'preload complete');
-
 							delete t._scripts;
 							tryExecute();
 						}
@@ -402,7 +396,7 @@ function Module(id, factory, deps, dirname) {
 	this._deps = deps;
 	this._dirname = dirname;
 
-	log( 'module', 'create: ' + (id || '') );
+	log('Module(constructor)', id || '');
 
 	if (id) {
 		this.setId(id);
@@ -432,7 +426,7 @@ extend(Module, {
 	load: function(id) {
 		if (Module.all[id]) { return; }
 
-		log('Module', 'load: ' + id);
+		log('Module.load', id);
 
 		scriptLoader.load(id, function() {
 			if (Module.all[id]) { return; }
@@ -458,7 +452,7 @@ extend(Module.prototype, {
 
 		if (t._id) { throw new Error('module id cannot be changed'); }
 
-		log('module', 'setId: ' + id);
+		log('module.setId', id);
 
 		t._id = id;
 
@@ -488,7 +482,7 @@ extend(Module.prototype, {
 					// 记录此模块尚未就绪
 					readyStates[dep] = true;
 
-					log('module', 'notReady: ' + dep);
+					log('module(depNotReady)', 'id(' + id + '), dep(' + dep + ')');
 
 					Module.load(dep);
 				}
@@ -504,8 +498,7 @@ extend(Module.prototype, {
 	_checkReady: function() {
 		var isReady = this.isReady(), id = this.id();
 
-		log('module', 'id: ' + id);
-		log('module', 'checkReady: ' + isReady);
+		log('module._checkReady', 'id(' + id + '), isReady(' + isReady + ')');
 
 		if (isReady) {
 			if ( this.isTask() ) {
@@ -518,7 +511,7 @@ extend(Module.prototype, {
 						module = Module.all[ moduleIds[i] ];
 						if (module) {
 							module.notifyReady(id);
-							log('module', 'notifyTo: ' + moduleIds[i]);
+							log('module(notifyTo)', 'from(' + id + '), to(' + moduleIds[i] + ')');
 						}
 					}
 					dependentChain.clear(id);
@@ -551,7 +544,7 @@ extend(Module.prototype, {
 
 	// 执行任务回调
 	execute: function() {
-		log('module', 'execute: ' + this.id());
+		log( 'module.execute', this.id() );
 
 		var deps = this._deps, modules = [ ];
 		for (var i = deps.length - 1; i >= 0; i--) {
@@ -568,7 +561,7 @@ extend(Module.prototype, {
 		if (!module) {
 			module = { id: t.id() };
 
-			log('module', 'export: ' + module.id);
+			log('module.exports', module.id);
 
 			if (typeof t._factory === 'function') {
 				module.exports = { };
@@ -576,7 +569,7 @@ extend(Module.prototype, {
 					return Module.require( idToURL(id, t._dirname) );
 				};
 				myRequire.async = function(ids, callback) {
-					log('asyncRequire', ids);
+					log('asyncRequire', 'require(' + ids + '), moduleId(' + t.id() + ')');
 					taskManager.add(
 						new Module(null, callback, unifyArray(ids), t._dirname)
 					);
