@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-08T18:55:11+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-09T10:25:11+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -641,8 +641,8 @@ global.define.amd = { };
  * @param {Object} newConfig 新配置
  *   @param {String} [newConfig.libPath] 类库路径
  *   @param {String} [newConfig.appPath] 应用路径
- *   @param {Array} [newConfig.map] URL映射，多次配置会合并
  *   @param {Boolean} [newConfig.debug] 是否调试模式
+ *   @param {Array} [newConfig.map] URL映射，多次配置会合并
  *   @param {String|Function} [newConfig.charset] 编码
  *   @param {Array} [newConfig.preload] 预加载脚本
  */
@@ -657,8 +657,6 @@ bowljs.config = function(newConfig) {
 	if (newConfig.libPath) { config.libPath = fixPath(newConfig.libPath); }
 	if (newConfig.appPath) { config.appPath = fixPath(newConfig.appPath); }
 
-	if (newConfig.map) { config.map = config.map.concat(newConfig.map); }
-
 	var search = global.location.search;
 	// 指定调试模式，优先级：URL参数>配置参数>默认值 
 	if ( /[?|&]debug(&|$)/.test(search) ) {
@@ -668,6 +666,8 @@ bowljs.config = function(newConfig) {
 	} else if (newConfig.debug != null) {
 		config.debug = !!newConfig.debug;
 	}
+
+	if (newConfig.map) { config.map = (config.map || [ ]).concat(newConfig.map); }
 
 	config.charset = newConfig.charset;
 	config.preload = newConfig.preload;
