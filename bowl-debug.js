@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-09T10:25:11+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-09T16:36:10+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -131,7 +131,7 @@ function idToURL(id, ref) {
 
 	// 处理调试后缀
 	var re_debug = /-debug$/;
-	if ( hash !== '#nondebug' && config.debug && !re_debug.test(filename) ) {
+	if ( config.debug && !re_debug.test(filename) ) {
 		filename += '-debug';
 	} else if ( !config.debug && re_debug.test(filename) ) {
 		filename = filename.replace(re_debug, '');
