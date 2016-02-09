@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-09T16:36:10+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-09T16:37:03+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -59,20 +59,63 @@ var isArray = Array.isArray || (function() {
 // 统一为数组结构
 function unifyArray(val) { return isArray(val) ? val : [val]; }
 
+// 保证字符串以某字符开头
+function ensurePrefix(str, prefix) {
+	str = trim(str);
+	return !str || str.charAt(0) == prefix ? str : prefix + str;
+}
+
+// 保证字符串以某字符结尾
+function ensureSuffix(str, suffix) {
+	str = trim(str);
+	return !str || str.charAt(str.length - 1) === suffix ? str : str + suffix;
+}
+
 
 // 检查是否绝对路径
 function isAbsPath(path) { return /^(?:[a-z]+:)?\/{2,}/i.test(path); }
 
-// 转换为绝对路径
-function toAbsPath(path) {
+// 创建一个包含a元素的div
+function createDivContainsA(href) {
 	// 旧IE下必须使用innerHTML注入a标签（不能只创建a元素），才能获得其绝对路径
 	var div = doc.createElement('div');
-	div.innerHTML = '<a href="' + path + '"></a>';
+	div.innerHTML = '<a href="' + href + '"></a>';
+	return div;
+}
+
+// 转换为绝对路径
+function toAbsPath(path) {
+	var div = createDivContainsA(path);
 	path = div.firstChild.href;
 	div = null;
-
 	return path;
 }
+
+// URL类，记录URL的解析结果，也可以修改某个部分形成新的URL
+function URL(url) {
+	var div = createDivContainsA(url), a = div.firstChild;
+	a.href = a.href;
+
+	var t = this;
+	// 解析出URL的各个部分
+	t.protocol = a.protocol;
+	t.host = a.host.replace(/:80$/, '');
+	t.hostname = a.hostname;
+	t.port = a.port;
+	t.pathname = ensurePrefix(a.pathname, '/');
+	t.search = a.search;
+	t.hash = a.hash;
+
+	div = a = null;
+}
+URL.prototype.toString = function() {
+	return ensureSuffix(this.protocol, ':') +
+		'//' + this.host +
+		ensurePrefix(this.pathname, '/') +
+		ensurePrefix(this.search, '?') +
+		ensurePrefix(this.hash, '#');
+};
+
 
 // 解析相对路径（ref必须以/结尾）
 function resolvePath(to, from) {
@@ -98,18 +141,13 @@ function idToURL(id, ref) {
 
 	if (canBeCached && idURLMapping[cacheKey]) { return idURLMapping[cacheKey]; }
 
-	// 临时记录URL中的锚点和参数
-	var hash = '', qs = '';
+	// 临时记录URL中的参数和锚点
+	var suffix = '';
 
 	id = id
-		// 请求JS资源的时候，锚点是没用的。可以用作id中的标记
-		.replace(/#(.*)$/, function(match, $1) {
-			if ( trim($1) ) { hash = match; }
-			return '';
-		})
-		// 暂时移除参数，便于解析
-		.replace(/\?(.*)$/, function(match, $1) {
-			if ( trim($1) ) { qs = match; }
+		// 暂时移除锚点和参数，便于解析
+		.replace(/(?:\?.*)?(?:#.*)?$/, function(match) {
+			suffix = match;
 			return '';
 		})
 		// 解析 module@version 为 module/version/module
@@ -138,7 +176,7 @@ function idToURL(id, ref) {
 	}
 	id.push(filename + '.' + extname);
 
-	var url = id.join('/') + qs;
+	var url = id.join('/') + suffix;
 	if ( !isAbsPath(url) ) { url = resolvePath(url, ref || ''); }
 
 	// 地址映射
@@ -146,7 +184,7 @@ function idToURL(id, ref) {
 	if (map) {
 		for (var i = 0; i < map.length; i++) {
 			if (typeof map[i] === 'function') {
-				url = map[i](url);
+				url = map[i]( new URL(url) );
 			} else if ( isArray(map[i]) ) {
 				url = url.replace(map[i][0], map[i][1]);
 			}
@@ -650,8 +688,7 @@ bowljs.config = function(newConfig) {
 	// 处理路径配置（转成绝对路径，路径末尾加上/）
 	var fixPath = function(path) {
 		if ( !isAbsPath(path) ) { path = toAbsPath(path); }
-		if ( path.charAt(path.length - 1) !== '/' ) { path += '/'; }
-		return path;
+		return ensureSuffix(path, '/');
 	};
 
 	if (newConfig.libPath) { config.libPath = fixPath(newConfig.libPath); }
