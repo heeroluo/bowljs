@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-10T11:37:23+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-10T11:57:42+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -75,7 +75,7 @@ function ensureSuffix(str, suffix) {
 // 检查是否绝对路径
 function isAbsPath(path) { return /^(?:[a-z]+:)?\/{2,}/i.test(path); }
 
-// 创建一个包含a元素的div
+// 创建一个包含a元素的div，用于获取绝对路径
 function createDivContainsA(href) {
 	// 旧IE下必须使用innerHTML注入a标签（不能只创建a元素），才能获得其绝对路径
 	var div = doc.createElement('div');
@@ -136,7 +136,7 @@ var idURLMapping = { };
 function idToURL(id, ref) {
 	var cacheKey = id = trim(id);
 
-	// 缓存非相对路径id的解析结果
+	// 缓存非相对路径id的转换结果
 	var canBeCached = !/^\./.test(id);
 
 	if (canBeCached && idURLMapping[cacheKey]) { return idURLMapping[cacheKey]; }
