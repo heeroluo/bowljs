@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-09T16:37:03+0800)
+ * Javascript module loader for browser - v1.1.0 (2016-02-10T11:37:23+0800)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -182,13 +182,11 @@ function idToURL(id, ref) {
 	// 地址映射
 	var map = config.map;
 	if (map) {
+		url = new URL(url);
 		for (var i = 0; i < map.length; i++) {
-			if (typeof map[i] === 'function') {
-				url = map[i]( new URL(url) );
-			} else if ( isArray(map[i]) ) {
-				url = url.replace(map[i][0], map[i][1]);
-			}
+			map[i](url);
 		}
+		url = url.toString();
 	}
 
 	// 记录解析结果
