@@ -33,7 +33,7 @@ Bowl.js的前身是[JRaiser项目](//github.com/heeroluo/jraiser)中的加载器
 * debug：**调试**参数。值为true时，加载器会在文件名中添加 `-debug` 后缀。
 * 更多可用参数见[配置文档](//github.com/heeroluo/bowljs/wiki/%E5%8A%A0%E8%BD%BD%E5%99%A8%E9%85%8D%E7%BD%AE)。
 
-综上所述，在 `index.html` 中 `require('/helloworld')` 时，由于模块id以 `/` 开头，所以基于 `appPath` 进行解析 。又因为 debug 参数为true，所以文件名后会自动添加 `-debug` 。最终解析结果为 `examples/helloworld/app/helloworld-debug.js` 。
+综上所述，在 `index.html` 中 `require('/helloworld')` 时，由于模块id以 `/` 开头，所以基于 `appPath` 进行解析 。又因为 debug 参数为true，所以文件名后会自动添加 `-debug` 。最终解析结果为 `examples/helloworld/app/helloworld-debug.js` 。更多id规则见[此文档](//github.com/heeroluo/bowljs/wiki/%E6%A8%A1%E5%9D%97id%E8%A7%84%E5%88%99)。
 
 ### 模块机制
 在 dom-debug.js 中，提供给外部的接口通过 `exports` 对象传递：
@@ -43,7 +43,7 @@ Bowl.js的前身是[JRaiser项目](//github.com/heeroluo/jraiser)中的加载器
 	};
 
 而在 helloworld-debug.js 中，则通过 `require('dom')` 获取外部模块提供的接口。
-是的，除了多出 `define(function(require, exports, module) { ... });` 这一层包装外，其他都跟Node.js的模块机制基本一致。
+是的，除了多出 `define(function(require, exports, module) { ... });` 这一层包装外，其他都跟Node.js的模块机制基本一致。关于define和require的更多说明见[此文档](//github.com/heeroluo/bowljs/wiki/define%E4%B8%8Erequire)。
 
 ## 模块编译
 为了提高性能，发布到生产环境的Javascript模块一般要经过压缩和合并。[JRaiser MDK](//github.com/heeroluo/jraiser-mdk)可以协助您完成这项工作。
