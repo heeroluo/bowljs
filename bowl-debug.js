@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.1 (2017-02-18T03:00:16Z)
+ * Javascript module loader for browser - v1.2.0 (2017-02-18T03:38:53Z)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -9,7 +9,7 @@
 if (global.bowljs) { return; }
 
 var bowljs = global.bowljs = {
-	version: '1.1.1',
+	version: '1.2.0',
 	logs: [ ]
 };
 
@@ -85,8 +85,18 @@ function createDivContainsA(href) {
 
 // 转换为绝对路径
 function toAbsPath(path) {
+	// 修正路径中有两个“/”的情况
+	var protocol = '';
+	path = path.replace(/^(?:[a-z]+:)?\/\//i, function(match) {
+		// 协议中有两个“/”，先提取出来
+		protocol = match;
+		return '';
+	}).replace(/\/{2,}/g, '/');
+	path = protocol + path;
+
 	var div = createDivContainsA(path);
 	path = div.firstChild.href;
+
 	div = null;
 	return path;
 }
@@ -130,13 +140,20 @@ URL.prototype.toString = function() {
 
 // 解析相对路径（ref必须以/结尾）
 function resolvePath(to, from) {
-	if ( /^\//.test(to) ) {
-		// 以“/”开头的路径，上下文路径为应用路径
-		from = config.appPath;
-		to = to.substr(1);
-	} else if ( !/^\./.test(to) ) {
-		// 非相对路径情况下，上下文路径为类库路径
-		from = config.libPath;
+	var re_beginWithDot = /^\./;
+	if (config.basePath) {
+		if (!from || !re_beginWithDot.test(to) ) {
+			from = config.basePath;
+		}
+	} else {
+		if ( /^\//.test(to) ) {
+			// 以“/”开头的路径，上下文路径为应用路径
+			from = config.appPath;
+			to = to.substr(1);
+		} else if ( !re_beginWithDot.test(to) ) {
+			// 非相对路径情况下，上下文路径为类库路径
+			from = config.libPath;
+		}
 	}
 
 	return toAbsPath(from + to);
@@ -689,6 +706,7 @@ global.define.amd = { };
  * @param {Object} newConfig 新配置
  *   @param {String} [newConfig.libPath] 类库路径
  *   @param {String} [newConfig.appPath] 应用路径
+ *   @param {String} [newConfig.basePath] 基础路径。如果此项不为空，则libPath和appPath均无效
  *   @param {Boolean} [newConfig.debug] 是否调试模式
  *   @param {Array} [newConfig.map] URL映射，多次配置会合并
  *   @param {String|Function} [newConfig.charset] 编码
@@ -703,6 +721,7 @@ bowljs.config = function(newConfig) {
 
 	if (newConfig.libPath) { config.libPath = fixPath(newConfig.libPath); }
 	if (newConfig.appPath) { config.appPath = fixPath(newConfig.appPath); }
+	if (newConfig.basePath) { config.basePath = fixPath(newConfig.basePath); }
 
 	var search = global.location.search;
 	// 指定调试模式，优先级：URL参数>配置参数>默认值 
