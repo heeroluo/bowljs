@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.1.0 (2016-02-10T11:57:42+0800)
+ * Javascript module loader for browser - v1.1.1 (2017-02-18T03:00:16Z)
  * http://jraiser.org/ | Released under MIT license
  */
 !function(global, undefined) { 'use strict';
@@ -9,7 +9,7 @@
 if (global.bowljs) { return; }
 
 var bowljs = global.bowljs = {
-	version: '1.1.0',
+	version: '1.1.1',
 	logs: [ ]
 };
 
@@ -99,7 +99,18 @@ function URL(url) {
 	var t = this;
 	// 解析出URL的各个部分
 	t.protocol = a.protocol;
-	t.host = a.host.replace(/:80$/, '');
+
+	// IE<=9会在host中添加默认端口号，移除之
+	switch (t.protocol) {
+		case 'http:':
+			t.host = a.host.replace(/:80$/, '');
+			break;
+
+		case 'https:':
+			t.host = a.host.replace(/:443$/, '');
+			break;
+	}
+
 	t.hostname = a.hostname;
 	t.port = a.port;
 	t.pathname = ensurePrefix(a.pathname, '/');
@@ -178,16 +189,17 @@ function idToURL(id, ref) {
 
 	var url = id.join('/') + suffix;
 	if ( !isAbsPath(url) ) { url = resolvePath(url, ref || ''); }
+	url = new URL(url);
 
 	// 地址映射
 	var map = config.map;
 	if (map) {
-		url = new URL(url);
 		for (var i = 0; i < map.length; i++) {
 			map[i](url);
 		}
-		url = url.toString();
 	}
+
+	url = url.toString();
 
 	// 记录解析结果
 	if (canBeCached) { idURLMapping[cacheKey] = url; }
