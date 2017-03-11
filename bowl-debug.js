@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.2.1 (2017-03-11T03:03:38Z)
+ * Javascript module loader for browser - v1.2.0 (2017-03-11T08:08:56Z)
  * http://jraiser.org/ | Released under MIT license
  */
 (function(global, undefined) {
@@ -11,7 +11,7 @@
 if (global.bowljs) { return; }
 
 var bowljs = global.bowljs = {
-	version: '1.2.1',
+	version: '1.2.0',
 	logs: [ ]
 };
 
