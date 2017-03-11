@@ -1,6 +1,6 @@
-define(function(require, exports, module) {
+define(function(require) {
 
-var dom = require('dom');
-dom.id('title').innerHTML = document.title;
+	var dom = require('dom');
+	dom.id('title').innerHTML = document.title;
 
 });

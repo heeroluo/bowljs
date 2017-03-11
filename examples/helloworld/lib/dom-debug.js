@@ -1,7 +1,7 @@
-define(function(require, exports, module) {
+define(function(require, exports) {
 
-exports.id = function(id) {
-	return document.getElementById(id);
-};
+	exports.id = function(id) {
+		return document.getElementById(id);
+	};
 
 });
