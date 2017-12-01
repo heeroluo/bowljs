@@ -1,3 +1,5 @@
+'use strict';
+
 var gulp = require('gulp'),
 	gulpReplace = require('gulp-replace'),
 	gulpUglify = require('gulp-uglify'),
@@ -6,10 +8,10 @@ var gulp = require('gulp'),
 
 gulp.task('default', function() {
 	gulp.src('./bowl-debug.js')
-		.pipe( gulpReplace(/^(\s*debug\s*:\s*)(?:true|false)/m, '$1false') )
-		.pipe( gulpUglify({
+		.pipe(gulpReplace(/^(\s*debug\s*:\s*)(?:true|false)/m, '$1false'))
+		.pipe(gulpUglify({
 			preserveComments: 'license'
-		}) )
-		.pipe( gulpRename('bowl.js') )
-		.pipe( gulp.dest('./') );
+		}))
+		.pipe(gulpRename('bowl.js'))
+		.pipe(gulp.dest('./'));
 });
