@@ -1,8 +1,8 @@
-const pump = require('pump');
-const gulp = require('gulp');
-const gulpReplace = require('gulp-replace');
-const gulpUglify = require('gulp-uglify');
-const gulpRename = require('gulp-rename');
+var pump = require('pump');
+var gulp = require('gulp');
+var gulpReplace = require('gulp-replace');
+var gulpUglify = require('gulp-uglify');
+var gulpRename = require('gulp-rename');
 
 
 gulp.task('default', function(cb) {
