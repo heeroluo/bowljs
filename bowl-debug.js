@@ -1,6 +1,6 @@
 /*!
  * Bowl.js
- * Javascript module loader for browser - v1.2.0 (2017-03-11T08:08:56Z)
+ * Javascript module loader for browser - v1.2.1 (2018-10-07T04:13:02Z)
  * http://jraiser.org/ | Released under MIT license
  */
 (function(global, undefined) {
@@ -108,6 +108,7 @@ function toAbsPath(path) {
 // URL类，记录URL的解析结果，也可以修改某个部分形成新的URL
 function URL(url) {
 	var div = createDivContainsA(url), a = div.firstChild;
+	/* eslint-disable no-self-assign */
 	a.href = a.href;
 
 	var t = this;
@@ -183,7 +184,7 @@ function idToURL(id, ref) {
 			return '';
 		})
 		// 解析 module@version 为 module/version/module
-		.replace(/([^\\\/]+)@([^\\\/]+)/g, function(match, module, version) {
+		.replace(/([^\\/]+)@([^\\/]+)/g, function(match, module, version) {
 			return module + '/' + version + '/' + module;
 		})
 		.split('/');
@@ -230,7 +231,7 @@ function idToURL(id, ref) {
 
 // 分析出依赖（require）的模块
 function parseDeps(code) {
-	var pattern = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s\)]+)\1\s*\)/g,
+	var pattern = /(?:^|[^.$])\brequire\s*\(\s*(["'])([^"'\s)]+)\1\s*\)/g,
 		result = [ ],
 		match;
 
