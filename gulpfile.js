@@ -1,17 +1,21 @@
-'use strict';
+const pump = require('pump');
+const gulp = require('gulp');
+const gulpReplace = require('gulp-replace');
+const gulpUglify = require('gulp-uglify');
+const gulpRename = require('gulp-rename');
 
-var gulp = require('gulp'),
-	gulpReplace = require('gulp-replace'),
-	gulpUglify = require('gulp-uglify'),
-	gulpRename = require('gulp-rename');
 
-
-gulp.task('default', function() {
-	gulp.src('./bowl-debug.js')
-		.pipe(gulpReplace(/^(\s*debug\s*:\s*)(?:true|false)/m, '$1false'))
-		.pipe(gulpUglify({
-			preserveComments: 'license'
-		}))
-		.pipe(gulpRename('bowl.js'))
-		.pipe(gulp.dest('./'));
+gulp.task('default', function(cb) {
+	pump([
+		gulp.src('./bowl-debug.js'),
+		gulpReplace(/^(\s*debug\s*:\s*)(?:true|false)/m, '$1false'),
+		gulpUglify({
+			ie8: true,
+			output: {
+				comments: require('uglify-save-license')
+			}
+		}),
+		gulpRename('bowl.js'),
+		gulp.dest('./')
+	], cb);
 });
