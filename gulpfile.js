@@ -3,6 +3,7 @@ var gulp = require('gulp');
 var gulpReplace = require('gulp-replace');
 var gulpUglify = require('gulp-uglify');
 var gulpRename = require('gulp-rename');
+var gulpModify = require('gulp-modify');
 
 
 gulp.task('default', function(cb) {
@@ -13,6 +14,11 @@ gulp.task('default', function(cb) {
 			ie8: true,
 			output: {
 				comments: require('uglify-save-license')
+			}
+		}),
+		gulpModify({
+			fileModifier: function(file, content) {
+				return '/* eslint-disable */\n' + content;
 			}
 		}),
 		gulpRename('bowl.js'),

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*!
  * Bowl.js
  * Javascript module loader for browser - v1.2.1
